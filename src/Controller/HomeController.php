@@ -55,13 +55,14 @@ class HomeController extends AbstractController
             $entityManager->persist($message);
             $entityManager->flush();
 
-            //Todo flash to view with proper message
-            return $this->render('home/home.html.twig', [
-                'message' => $form->createView(),
-                'success' => 'Message successfully sent',
-                // returnin the userID so we can generate the route for it
-                'user' => $userid,
-            ]);
+            //Todo Twilio send
+
+            $this->addFlash(
+                'notice',
+                'Your message has been sent...'
+            );
+            
+            return $this->redirect($request->getUri());
             
         }
 
@@ -85,7 +86,8 @@ class HomeController extends AbstractController
         $roles = $currentUser->getRoles();
 
         // if super admin then allow to view all messages
-        if($roles[0] !== "ROLE_SUPER_ADMIN") {
+        if($roles[0] != "ROLE_SUPER_ADMIN") {
+            //if id's dont match, not authorized to view messages
             if($id != $user) {
                 return $this->redirectToRoute('home');
             }
@@ -108,19 +110,19 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/admin/messages", name="admin")
+     * @Route("/admin/all", name="admin")
      */
-    public function all(Request $request)
+    public function all()
     {
         // deny access if applicable
-        $this->denyAccessUnlessGranted('ROLE_USER', null, 'User not authorized');
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN', null, 'User not authorized');
 
         // use repository to get data
         $messages = $this->getDoctrine()->getRepository(Message::class)->findAll();
 
         return $this->render('admin/all.html.twig', [
             'messages' => $messages,
-            'user' => $user,
+            
         ]);
         
     }

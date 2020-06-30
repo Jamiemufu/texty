@@ -24,15 +24,28 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
         
         <div class="view-messages">
-            <p><a href="/{{user.id}}/messages">View sent messages?</a></p>
+            <p><a href="/{{user.id}}/messages">View your sent messages?</a></p>
+
             {% if is_granted('ROLE_SUPER_ADMIN') %}
-                <p><a href="/admin/messages">View all messages sent?</a></p>
+                <p><a href="/admin/all">View all messages sent?</a></p>
             {% endif %}
-            {% if success is defined  %}
-                <p>{{success}}</p>
-            {% endif %}
+
+            <p><a href="/logout">Logout?</a></p>
+
+            {% for message in app.flashes('notice') %}
+                <div class="flash-notice">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
         </div>
 
+        {% if form_errors(message.phone_number) %}
+            <span class="error">{{form_errors(message.phone_number) }}</span>
+        {% elseif form_errors(message.text)%}
+            <span class="error">{{form_errors(message.text) }}</span>
+        {% endif %}
+        
         {{form_label(message.send)}}
         {{form_widget(message.send)}}
 

@@ -5,6 +5,7 @@
 @import 'includes/register.scss';
 @import 'includes/home.scss';
 @import 'includes/tables.scss';
+@import 'includes/messages.scss';
 
 
 // GENERAL STYLES
@@ -32,7 +33,6 @@ a {
 
 .error {
     margin-top: 25px;
-    text-transform: capitalize;
     color: red;
 }
 
