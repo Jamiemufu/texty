@@ -1,3 +1,49 @@
+//IMPORTS
+
+@import 'includes/form.scss';
+@import 'includes/lists.scss';
+@import 'includes/register.scss';
+
+
+// GENERAL STYLES
+
 body {
-    background-color: lightgray;
+    height: 100vh;
+    background: rgb(2, 0, 36);
+    background: linear-gradient(180deg, rgba(2, 0, 36, 1) 0%, rgba(110, 9, 121, 0.7455357142857143) 50%, rgba(0, 212, 255, 1) 100%);
+    color: white;
+    box-sizing: border-box;
 }
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+a {
+    color: white;
+    text-decoration: underline;
+}
+
+.error {
+    margin-top: 25px;
+    text-transform: capitalize;
+    color: red;
+}
+
+h1 {
+    text-transform: capitalize;
+    font-size: 39px;
+}
+
+h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    padding-bottom: 25px;
+}
+
+

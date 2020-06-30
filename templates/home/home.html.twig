@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <form method="post">
+        <h1>Texty</h1>
+
+         {% if is_granted('ROLE_SUPER_ADMIN') %}
+            <h2> SUPER ADMIN BRO</h2>
+        {% endif %}
+
+        <p>Please enter a phonenumber and message below to send a SMS</p>
+
+        <div class="form-group">
+            <label for="inputEmail">Phone Number</label>
+            <input type="email" value="" name="phone" id="inputEmail" class="form-control" required autofocus>
+        </div>
+        
+        <div class="form-group">
+            <label>Message</label>
+            <textarea></textarea>
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        {# {% if error %}
+            <span class="error">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
+        {% endif %} #}
+        
+        <p><a href="/register">View sent messages?</a></p>
+
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+            <a href="">View all messages sent?</a></p>
+        {% endif %}
+
+        <button type="submit">
+            Send
+        </button>
+    </form>
+</div>
+
+{% endblock %}
