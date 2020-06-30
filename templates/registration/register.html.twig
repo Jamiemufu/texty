@@ -11,19 +11,30 @@
 
         <h1>Texty</h1>
         <p>Please register below so you can send messages</p>
+        <small>* - required</small>
 
         <div class="form-group">
-           
-                {{ form_label(registrationForm.email) }}
-                {{ form_widget(registrationForm.email) }}
-            
+            {{ form_label(registrationForm.email) }}
+            {{ form_widget(registrationForm.email) }}
         </div>
+
         <div class="form-group">
-          
-                {{ form_label(registrationForm.plainPassword, 'Password') }}
-                {{ form_widget(registrationForm.plainPassword )}}
-           
+            {{ form_label(registrationForm.firstname, 'Firstname') }}
+            {{ form_widget(registrationForm.firstname )}}
         </div>
+
+        <div class="form-group">
+            {{ form_label(registrationForm.lastname, 'Lastname') }}
+            {{ form_widget(registrationForm.lastname )}}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(registrationForm.plainPassword, 'Password') }}
+            {{ form_widget(registrationForm.plainPassword )}}
+        </div>
+
+        
+
         {% for flashError in app.flashes('verify_email_error') %}
             <span class="alert alert-danger" role="alert">{{ flashError }}</span>
         {% endfor %}
@@ -33,7 +44,7 @@
         {% elseif form_errors(registrationForm.plainPassword)%}
             <span class="error">{{form_errors(registrationForm.plainPassword) }}</span>
         {% endif %}
-
+        <p><a href="/login">Already registered?</a></p>
         <button type="submit" class="btn">Register</button>
 
     {{ form_end(registrationForm) }}

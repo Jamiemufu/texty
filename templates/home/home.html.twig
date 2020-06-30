@@ -7,12 +7,8 @@
 <div class="container">
     {{form_start(message)}}
 
-        <h1>Texty</h1>
-
-         {% if is_granted('ROLE_SUPER_ADMIN') %}
-            <h2> SUPER ADMIN BRO</h2>
-        {% endif %}
-
+        <h1>{{user.firstname}}</h1>
+        
         <p>Please enter a phone number and message below to send a SMS</p>
 
         <div class="form-group">
@@ -28,9 +24,9 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
         
         <div class="view-messages">
-            <p><a href="/{{user}}/messages">View sent messages?</a></p>
+            <p><a href="/{{user.id}}/messages">View sent messages?</a></p>
             {% if is_granted('ROLE_SUPER_ADMIN') %}
-                <p><a href="">View all messages sent?</a></p>
+                <p><a href="/admin/messages">View all messages sent?</a></p>
             {% endif %}
             {% if success is defined  %}
                 <p>{{success}}</p>

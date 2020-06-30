@@ -13,6 +13,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 class HomeController extends AbstractController
 {
+
+
+    //TODO ADD FIRST NAME AND LAST NAME TO USER
+     
     /**
      * @Route("/", name="home")
      */
@@ -63,7 +67,7 @@ class HomeController extends AbstractController
 
         return $this->render('home/home.html.twig', [
             'message' => $form->createView(),
-            'user' => $userid,
+            'user' => $user,
         ]);
     }
 
@@ -74,6 +78,18 @@ class HomeController extends AbstractController
     {
         // deny access if applicable
         $this->denyAccessUnlessGranted('ROLE_USER', null, 'User not authorized');
+
+        //get user vars and store
+        $currentUser = $this->getUser();
+        $id = $currentUser->getId();
+        $roles = $currentUser->getRoles();
+
+        // if super admin then allow to view all messages
+        if($roles[0] !== "ROLE_SUPER_ADMIN") {
+            if($id != $user) {
+                return $this->redirectToRoute('home');
+            }
+        }
 
         // use repository to get data
         $repository = $this->getDoctrine()->getRepository(Message::class);
@@ -89,5 +105,23 @@ class HomeController extends AbstractController
             'messages' => $messages,
             'user' => $user,
         ]);
+    }
+
+    /**
+     * @Route("/admin/messages", name="admin")
+     */
+    public function all(Request $request)
+    {
+        // deny access if applicable
+        $this->denyAccessUnlessGranted('ROLE_USER', null, 'User not authorized');
+
+        // use repository to get data
+        $messages = $this->getDoctrine()->getRepository(Message::class)->findAll();
+
+        return $this->render('admin/all.html.twig', [
+            'messages' => $messages,
+            'user' => $user,
+        ]);
+        
     }
 }

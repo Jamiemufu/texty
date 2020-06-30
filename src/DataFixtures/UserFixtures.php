@@ -24,6 +24,7 @@ class UserFixtures extends Fixture
         $user = new User();
         $user->setEmail($this->params->get('admin_email'));
         $user->setRoles(['ROLE_SUPER_ADMIN']);
+        $user->setFirstname("Admin");
         $user->setPassword($this->passwordEncoder->encodePassword(
             $user,
             $this->params->get('admin_password')

@@ -60,4 +60,5 @@ class MessageRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult();
     }
+
 }
