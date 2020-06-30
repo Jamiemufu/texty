@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="messages">
+        {# BASIC BOILERPLATE NEEDS TO CHANGE #}
+        <h1>{{user.email}}</h1>
+        <table>
+            <tr>
+                <th>Phone number</th>
+                <th>Message</th>
+                <th>Status</th>
+            </tr>
+            {% for message in messages %}
+                <tr>
+                    <td>{{message.phonenumber}}</td>
+                    <td>{{message.text}}</td>
+                    <td>{{message.status}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

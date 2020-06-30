@@ -5,41 +5,42 @@
 {% block body %}
 
 <div class="container">
-    <form method="post">
+    {{form_start(message)}}
+
         <h1>Texty</h1>
 
          {% if is_granted('ROLE_SUPER_ADMIN') %}
             <h2> SUPER ADMIN BRO</h2>
         {% endif %}
 
-        <p>Please enter a phonenumber and message below to send a SMS</p>
+        <p>Please enter a phone number and message below to send a SMS</p>
 
         <div class="form-group">
-            <label for="inputEmail">Phone Number</label>
-            <input type="email" value="" name="phone" id="inputEmail" class="form-control" required autofocus>
+            {{form_label(message.phone_number)}}
+            {{form_widget(message.phone_number)}}
         </div>
-        
+
         <div class="form-group">
-            <label>Message</label>
-            <textarea></textarea>
+            {{form_label(message.text, "Message")}}
+            {{form_widget(message.text)}}
         </div>
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-        {# {% if error %}
-            <span class="error">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
-        {% endif %} #}
         
-        <p><a href="/register">View sent messages?</a></p>
+        <div class="view-messages">
+            <p><a href="/{{user}}/messages">View sent messages?</a></p>
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                <p><a href="">View all messages sent?</a></p>
+            {% endif %}
+            {% if success is defined  %}
+                <p>{{success}}</p>
+            {% endif %}
+        </div>
 
-        {% if is_granted('ROLE_SUPER_ADMIN') %}
-            <a href="">View all messages sent?</a></p>
-        {% endif %}
+        {{form_label(message.send)}}
+        {{form_widget(message.send)}}
 
-        <button type="submit">
-            Send
-        </button>
-    </form>
+    {{form_end(message)}}
 </div>
 
 {% endblock %}

@@ -47,4 +47,17 @@ class MessageRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /**
+     * return messages
+     */
+    public function getMessagesFromUser($user): ?array
+    {
+        return $this->createQueryBuilder('u')
+        ->where('u.user = :user')
+        ->setParameter('user', $user)
+        ->orderBy('u.timestamp', 'ASC')
+        ->getQuery()
+        ->getResult();
+    }
 }

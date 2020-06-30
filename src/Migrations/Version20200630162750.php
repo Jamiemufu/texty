@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200630134829 extends AbstractMigration
+final class Version20200630162750 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,8 +22,11 @@ final class Version20200630134829 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE TABLE message (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, text VARCHAR(255) NOT NULL, status VARCHAR(255) NOT NULL, timestamp DATETIME NOT NULL, INDEX IDX_B6BD307F9D86650F (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307F9D86650F');
+        $this->addSql('DROP INDEX IDX_B6BD307F9D86650F ON message');
+        $this->addSql('ALTER TABLE message ADD phone_number VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE message ADD CONSTRAINT FK_B6BD307F9D86650F FOREIGN KEY (user_id) REFERENCES user (id)');
+        $this->addSql('CREATE INDEX IDX_B6BD307F9D86650F ON message (user_id)');
     }
 
     public function down(Schema $schema) : void
@@ -31,6 +34,10 @@ final class Version20200630134829 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('DROP TABLE message');
+        $this->addSql('ALTER TABLE message DROP FOREIGN KEY FK_B6BD307F9D86650F');
+        $this->addSql('DROP INDEX IDX_B6BD307F9D86650F ON message');
+        $this->addSql('ALTER TABLE message DROP phone_number');
+        $this->addSql('ALTER TABLE message ADD CONSTRAINT FK_B6BD307F9D86650F FOREIGN KEY (user_id) REFERENCES user (id)');
+        $this->addSql('CREATE INDEX IDX_B6BD307F9D86650F ON message (user_id)');
     }
 }

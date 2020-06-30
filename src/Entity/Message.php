@@ -30,13 +30,18 @@ class Message
     /**
      * @ORM\Column(type="datetime")
      */
-    private $timesteamp;
+    private $timestamp;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $userID;
+    private $user;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $phone_number;
 
     public function getId(): ?int
     {
@@ -67,26 +72,38 @@ class Message
         return $this;
     }
 
-    public function getTimesteamp(): ?\DateTimeInterface
+    public function getTimestamp(): ?\DateTimeInterface
     {
-        return $this->timesteamp;
+        return $this->timestamp;
     }
 
-    public function setTimesteamp(\DateTimeInterface $timesteamp): self
+    public function setTimestamp(\DateTimeInterface $timestamp): self
     {
-        $this->timesteamp = $timesteamp;
+        $this->timestamp = $timestamp;
 
         return $this;
     }
 
-    public function getUserID(): ?User
+    public function getUser(): ?User
     {
-        return $this->userID;
+        return $this->user;
     }
 
-    public function setUserID(?User $userID): self
+    public function setUser(?User $user): self
     {
-        $this->userID = $userID;
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phone_number;
+    }
+
+    public function setPhoneNumber(string $phone_number): self
+    {
+        $this->phone_number = $phone_number;
 
         return $this;
     }
