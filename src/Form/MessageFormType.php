@@ -15,28 +15,19 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
-
+use libphonenumber\PhoneNumberFormat;
+use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 
 class MessageFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('phone_number', TextType::class, [
-                'required' => true,
-                'constraints' => [
-                    new Regex([
-                        'pattern' => '^([0-9]{10,11})$^',
-                        'message' => 'Phone number not a valid format',
-                    ]),
-                    new Length([
-                        'min' => 8,
-                        'max' => 20,
-                        'minMessage' => 'Phone Number is not long enough',
-                        'maxMessage' => 'Phone Number is too long',
-                    ])
-                ]
-            ])
+            ->add('phone_number', PhoneNumberType::class, [
+                'widget' => PhoneNumberType::WIDGET_COUNTRY_CHOICE,
+                'country_choices' => array('GB', 'JE', 'FR', 'US'),
+                'preferred_country_choices' => array('GB', 'JE'),
+                ])
             ->add('text', TextareaType::class, [
                 'required' => true,
                 'constraints' => [

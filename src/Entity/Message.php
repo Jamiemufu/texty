@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
-
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 /**
  * @ORM\Entity(repositoryClass=MessageRepository::class)
  */
@@ -39,9 +39,11 @@ class Message
     private $user;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="phone_number")
      */
-    private $phone_number;
+    private $phoneNumber;
+
+    
 
     public function getId(): ?int
     {
@@ -96,15 +98,16 @@ class Message
         return $this;
     }
 
-    public function getPhoneNumber(): ?string
+    public function getPhoneNumber()
     {
-        return $this->phone_number;
+        return $this->phoneNumber;
     }
 
-    public function setPhoneNumber(string $phone_number): self
+    public function setPhoneNumber($phoneNumber): self
     {
-        $this->phone_number = $phone_number;
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }
+
 }

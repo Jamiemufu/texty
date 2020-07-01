@@ -1,17 +1,18 @@
 <?php
 
 namespace App\Controller;
-
+use libphonenumber\PhoneNumberUtil;
 use App\Form\MessageFormType;
 use App\Entity\Message;
 use App\Entity\User;
+use Twilio\Rest\Client;
 
-
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
-class HomeController extends AbstractController
+class HomeController extends Controller
 {
 
 
@@ -42,11 +43,11 @@ class HomeController extends AbstractController
         $form->handleRequest($request);
 
         // posted and validated
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {            
 
-            //Todo this will be the twilio callback url
-            $message->setStatus("Sent");
+            //Todo this will be the twilio callback
             $message = $form->getData();
+            $message->setStatus("Sent");
             $message->setTimestamp(new \DateTime('now'));
 
             //Todo send to Rabbid queue
@@ -56,6 +57,13 @@ class HomeController extends AbstractController
             $entityManager->flush();
 
             //Todo Twilio send
+            $to = $message->getPhonenumber();
+            $text = $message->getText();
+            $twilio = $this->container->get('twilio.client');
+            $twilio->messages->create($to, [
+                'from' => $this->getParameter('twilio_number'),
+                'body' => $text,
+            ]);
 
             $this->addFlash(
                 'notice',
@@ -72,6 +80,13 @@ class HomeController extends AbstractController
         ]);
     }
 
+    public function __toString()
+    {
+        return $phoneNumberUtil = PhoneNumberUtil::getInstance();
+        // $number = $phoneNumberUtil->format($this->phone_number, \libphonenumber\PhoneNumberFormat::NATIONAL);     
+
+        // return $this->nickName . " - " . $number;
+    }
     /**
      * @Route("/{user}/messages", name="userMessages")
      */

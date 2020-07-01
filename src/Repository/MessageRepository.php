@@ -56,7 +56,7 @@ class MessageRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('u')
         ->where('u.user = :user')
         ->setParameter('user', $user)
-        ->orderBy('u.timestamp', 'ASC')
+        ->orderBy('u.timestamp', 'DESC')
         ->getQuery()
         ->getResult();
     }
