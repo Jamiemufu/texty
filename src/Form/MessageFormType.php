@@ -22,6 +22,7 @@ class MessageFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        //added PhoneNumberType from package
         $builder
             ->add('phone_number', PhoneNumberType::class, [
                 'widget' => PhoneNumberType::WIDGET_COUNTRY_CHOICE,

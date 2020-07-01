@@ -43,6 +43,11 @@ class Message
      */
     private $phoneNumber;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $sms_id;
+
     
 
     public function getId(): ?int
@@ -106,6 +111,18 @@ class Message
     public function setPhoneNumber($phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    public function getSmsId(): ?string
+    {
+        return $this->sms_id;
+    }
+
+    public function setSmsId(?string $sms_id): self
+    {
+        $this->sms_id = $sms_id;
 
         return $this;
     }

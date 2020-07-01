@@ -1,28 +1,24 @@
 <?php
 
 namespace App\Controller;
-use libphonenumber\PhoneNumberUtil;
-use App\Form\MessageFormType;
+
 use App\Entity\Message;
 use App\Entity\User;
-use Twilio\Rest\Client;
-
+use App\Form\MessageFormType;
+use libphonenumber\PhoneNumberUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends Controller
 {
 
-
-    //TODO ADD FIRST NAME AND LAST NAME TO USER
-     
     /**
      * @Route("/", name="home")
      */
     public function index(Request $request)
-    {   
+    {
 
         $this->denyAccessUnlessGranted('ROLE_USER', null, 'User not authorized');
 
@@ -43,35 +39,40 @@ class HomeController extends Controller
         $form->handleRequest($request);
 
         // posted and validated
-        if ($form->isSubmitted() && $form->isValid()) {            
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            //Todo this will be the twilio callback
+            // map form data to message
             $message = $form->getData();
-            $message->setStatus("Sent");
+            $message->setStatus("Processing"); //this will be a callback
             $message->setTimestamp(new \DateTime('now'));
 
-            //Todo send to Rabbid queue
             //save to db
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($message);
             $entityManager->flush();
 
-            //Todo Twilio send
-            $to = $message->getPhonenumber();
+            //format phone_number object to string for twilio send
+            $formatPhone = \libphonenumber\PhoneNumberUtil::getInstance();
+            $to = $formatPhone->format($message->getPhoneNumber(), \libphonenumber\PhoneNumberFormat::INTERNATIONAL);
             $text = $message->getText();
+
+            // set client
             $twilio = $this->container->get('twilio.client');
+
             $twilio->messages->create($to, [
                 'from' => $this->getParameter('twilio_number'),
                 'body' => $text,
+                'statusCallback' => "http://d9b4a9caf4f5.ngrok.io/message/{$message->getId()}/status",
             ]);
 
+            // simple flash message to view
             $this->addFlash(
                 'notice',
                 'Your message has been sent...'
             );
-            
+
             return $this->redirect($request->getUri());
-            
+
         }
 
         return $this->render('home/home.html.twig', [
@@ -80,15 +81,10 @@ class HomeController extends Controller
         ]);
     }
 
-    public function __toString()
-    {
-        return $phoneNumberUtil = PhoneNumberUtil::getInstance();
-        // $number = $phoneNumberUtil->format($this->phone_number, \libphonenumber\PhoneNumberFormat::NATIONAL);     
-
-        // return $this->nickName . " - " . $number;
-    }
     /**
      * @Route("/{user}/messages", name="userMessages")
+     *
+     * show users messages sent
      */
     public function show($user)
     {
@@ -101,9 +97,9 @@ class HomeController extends Controller
         $roles = $currentUser->getRoles();
 
         // if super admin then allow to view all messages
-        if($roles[0] != "ROLE_SUPER_ADMIN") {
+        if ($roles[0] != "ROLE_SUPER_ADMIN") {
             //if id's dont match, not authorized to view messages
-            if($id != $user) {
+            if ($id != $user) {
                 return $this->redirectToRoute('home');
             }
         }
@@ -117,7 +113,6 @@ class HomeController extends Controller
             ->getRepository(Message::class)
             ->getMessagesFromUser($user);
 
-
         return $this->render('home/messages.html.twig', [
             'messages' => $messages,
             'user' => $user,
@@ -126,6 +121,8 @@ class HomeController extends Controller
 
     /**
      * @Route("/admin/all", name="admin")
+     *
+     * View all messages sent accross all users
      */
     public function all()
     {
@@ -137,8 +134,43 @@ class HomeController extends Controller
 
         return $this->render('admin/all.html.twig', [
             'messages' => $messages,
-            
+
         ]);
-        
+
+    }
+
+    /**
+     * @Route("/message/{id}/status", name="status")
+     *
+     * Get the status and messageID from the callback of Twilio send
+     * Update database accordingly - Twilio will send another request when status changes
+     */
+    public function statusRequest($id, Request $request)
+    {
+        $messageID = $request->request->get('SmsSid');
+        $status = $request->request->get('SmsStatus');
+
+        $message = $this->getDoctrine()
+            ->getRepository(Message::class)
+            ->find($id);
+
+        //check if they are already written and up to date
+        if ($messageID !== $message->getId() || $status !== $message->getStatus()) {
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $message->setSmsId($messageID);
+            $message->setStatus($status);
+            $entityManager->flush();
+
+        }
+
+        $response = new Response();
+        $response->setContent(json_encode([
+            'success' => "Successfully updated SMSID and Status",
+        ]));
+
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 }

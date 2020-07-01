@@ -8,7 +8,7 @@ parameters:
   admin_password: '%env(ADMIN_PASSWORD)%'
   # Twilio
   twilio_sid: ACddd44b8f5a6282e61faa464fc392fab5
-  twilio_token: 1d6a5f6ef35f36a703e0d97d2bb86a35
+  twilio_token: af44c9a61c0fd1c3730b444356b4ee34
   twilio_number: '+12018624282'
 
 
@@ -17,6 +17,7 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        #setting tp public for twilio
         public: true
 
     # makes classes in src/ available to be used as services

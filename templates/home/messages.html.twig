@@ -17,7 +17,7 @@
             </tr>
             {% for message in messages %}
                 <tr>
-                    <td class="table-cell__phone">{{message.phonenumber}}</td>
+                    <td class="table-cell__phone">{{message.phonenumber|phone_number_format('NATIONAL')}}</td>
                     <td class="table-cell__message">{{message.text}}</td>
                     <td class="table-cell__status">{{message.status}}</td>
                 </tr>
