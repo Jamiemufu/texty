@@ -135,7 +135,7 @@ class HomeController extends Controller
     }
 
     /**
-     * @Route("/message/{id}/status", name="status")
+     * @Route("/message/status/{id}", name="status")
      *
      * Get the status and messageID from the callback of Twilio send
      * Update database accordingly - Twilio will send another request when status changes

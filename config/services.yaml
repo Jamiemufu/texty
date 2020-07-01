@@ -10,6 +10,7 @@ parameters:
   twilio_sid: '%env(TWILIO_SID)%'
   twilio_token: '%env(TWILIO_TOKEN)%'
   twilio_number: '%env(TWILIO_NUMBER)%'
+  twilio_callback_uri: '%env(TWILIO_CALLBACK_URI)%'
 
 
 services:

@@ -55,7 +55,7 @@ class Sendsms
         $this->body = $body;
     }
 
-    public function getMessageID(): int
+    public function getMessageID()
     {
         return $this->messageID;
     }

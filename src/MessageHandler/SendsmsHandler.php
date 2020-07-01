@@ -5,17 +5,28 @@ namespace App\MessageHandler;
 use Twilio\Rest\Client;
 use App\Message\Sendsms;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
 class SendsmsHandler implements MessageHandlerInterface
+
+    /*
+     * Change the status callback to your reachable domain - using ngrok for testing and local env
+     * This can be changed in the .env
+     * Run: php bin/console messenger:consume async to consume the queue and start a worker
+     */
 {      
     private $container;
+
+    private $params;
+
     /**
      * Get container service
      */
-    public function __construct(Container $container)
+    public function __construct(Container $container, ParameterBagInterface $params)
     {
         $this->container = $container;
+        $this->params = $params;
     }
 
     /**
@@ -28,9 +39,8 @@ class SendsmsHandler implements MessageHandlerInterface
         $twilio->messages->create($message->getPhoneNumber(), [
             'from' => $message->getmyNumber(),
             'body' => $message->getBody(),
-            'statusCallback' => "http://d9b4a9caf4f5.ngrok.io/message/{$message->getMessageID()}/status",
+            'statusCallback' => "{$this->params->get('twilio_callback_uri')}message/status/{$message->getMessageID()}",
         ]);
     }
-
-    // run: php bin/console messenger:consume async to consume the queue and start a worker
+    
 }
