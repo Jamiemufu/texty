@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Message\Sendsms;
+use Symfony\Component\Messenger\MessageBusInterface;
 use App\Entity\Message;
 use App\Entity\User;
 use App\Form\MessageFormType;
@@ -16,8 +18,10 @@ class HomeController extends Controller
 
     /**
      * @Route("/", name="home")
+     * 
+     * display form to send message
      */
-    public function index(Request $request)
+    public function index(Request $request, MessageBusInterface $bus)
     {
 
         $this->denyAccessUnlessGranted('ROLE_USER', null, 'User not authorized');
@@ -33,9 +37,6 @@ class HomeController extends Controller
 
         // create form from class
         $form = $this->createForm(MessageFormType::class, $message);
-
-        //Todo add form validation
-
         $form->handleRequest($request);
 
         // posted and validated
@@ -56,14 +57,8 @@ class HomeController extends Controller
             $to = $formatPhone->format($message->getPhoneNumber(), \libphonenumber\PhoneNumberFormat::INTERNATIONAL);
             $text = $message->getText();
 
-            // set client
-            $twilio = $this->container->get('twilio.client');
-
-            $twilio->messages->create($to, [
-                'from' => $this->getParameter('twilio_number'),
-                'body' => $text,
-                'statusCallback' => "http://d9b4a9caf4f5.ngrok.io/message/{$message->getId()}/status",
-            ]);
+            // send to queue
+            $bus->dispatch(new Sendsms($message->getId(), $text, $this->getParameter('twilio_number'), $to));
 
             // simple flash message to view
             $this->addFlash(
@@ -156,12 +151,10 @@ class HomeController extends Controller
 
         //check if they are already written and up to date
         if ($messageID !== $message->getId() || $status !== $message->getStatus()) {
-
             $entityManager = $this->getDoctrine()->getManager();
             $message->setSmsId($messageID);
             $message->setStatus($status);
             $entityManager->flush();
-
         }
 
         $response = new Response();
