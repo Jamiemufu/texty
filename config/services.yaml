@@ -7,9 +7,9 @@ parameters:
   admin_email: '%env(ADMIN_EMAIL)%'
   admin_password: '%env(ADMIN_PASSWORD)%'
   # Twilio
-  twilio_sid: ACddd44b8f5a6282e61faa464fc392fab5
-  twilio_token: af44c9a61c0fd1c3730b444356b4ee34
-  twilio_number: '+12018624282'
+  twilio_sid: '%env(TWILIO_SID)%'
+  twilio_token: '%env(TWILIO_TOKEN)%'
+  twilio_number: '%env(TWILIO_NUMBER)%'
 
 
 services:
