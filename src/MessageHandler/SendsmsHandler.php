@@ -41,6 +41,11 @@ class SendsmsHandler implements MessageHandlerInterface
             'body' => $message->getBody(),
             'statusCallback' => "{$this->params->get('twilio_callback_uri')}message/status/{$message->getMessageID()}",
         ]);
+
+        /*
+         * I would manange exceptions and errors here with a response
+         * With a trial account though, I can't access any errors or add more phone numbers
+         */
     }
     
 }

@@ -3,12 +3,7 @@
 namespace App\Message;
 
 class Sendsms
-{
-    /*
-     * Add whatever properties & methods you need to hold the
-     * data for this message class.
-     */
-    
+{    
     private $phoneNumber;
 
     private $myNumber;
